@@ -1,40 +1,31 @@
 import React from 'react';
 import styled from 'styled-components';
-import Counter from './components/Counter';
+import {BrowserRouter, Route, Link} from 'react-router-dom';
+import Home from './pages/Home';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      counter: 0
-    };
-  }
 
-  incrementCounter = () => {
-    const currentCounter = this.state.counter;
-    this.setState({
-      counter: currentCounter + 1
-    });
-  };
-
-  render() {
-    return (
+const App = () => {
+  return (
+    <BrowserRouter>
       <div className="App">
         <Header>
           <HeaderLink>
-            Hjem
+            <Link to="/">
+              Hjem
+              </Link>
           </HeaderLink>
           <HeaderLink>
-            Redux
+            <Link to={"/products"}>
+              Redux
+              </Link>
           </HeaderLink>
         </Header>
-        <ContentContainer>
-          <Counter setCounter={this.incrementCounter} counter={this.state.counter}/>
-        </ContentContainer>
+        <Route exact path="/" component={Home}/>
+        <Route path="/products" component={}/>
       </div>
-    );
-  }
-}
+    </BrowserRouter>
+  );
+};
 
 export default App;
 
@@ -51,11 +42,4 @@ const HeaderLink = styled.a`
   font-weight: 300;
   text-decoration: none;
   cursor: pointer;
-`;
-
-const ContentContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
 `;
