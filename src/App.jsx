@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {BrowserRouter, Route, Link} from 'react-router-dom';
 import Home from './pages/Home';
+import Products from './pages/Products';
 
 
 const App = () => {
@@ -21,7 +22,7 @@ const App = () => {
           </HeaderLink>
         </Header>
         <Route exact path="/" component={Home}/>
-        <Route path="/products" component={}/>
+        <Route path="/products" component={Products}/>
       </div>
     </BrowserRouter>
   );
@@ -36,7 +37,7 @@ const Header = styled.header`
   justify-content: center;
 `;
 
-const HeaderLink = styled.a`
+const HeaderLink = styled.div`
   padding: 1rem;
   font-size: 24px;
   font-weight: 300;
