@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -11,7 +12,7 @@ class Home extends React.Component {
     render() {
         return (
             <Container>
-                Heeey!
+                <img src={require('../assets/luna.jpg')}/>
             </Container>
         )
     }
@@ -23,5 +24,11 @@ export default Home;
 const Container = styled.div`
     display: flex;
     width: 100%;
-    background-color: cyan;
+`;
+
+const Image = styled.div`
+    background-image: url(../../public/luna.jpg);
+    background-position: 50% 50%;
+    background-size: cover;
+    height: 500px;
 `;
