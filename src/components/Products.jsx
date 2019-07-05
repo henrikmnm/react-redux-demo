@@ -1,92 +1,39 @@
 import React from 'react';
 import { REQ } from '../utils/requestStatus';
 import styled from 'styled-components';
-
+import PropTypes from 'prop-types';
 
 class Products extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedProducts: [],
-            availableProducts: {
-                products: [],
-                status: REQ.INIT
-            },
-            searchString: ""
-        };
+    static contextTypes = {
+        router: PropTypes.object
     }
 
-    handleSearchInput = (event) => {
-        this.setState({
-            searchString: event.target.value
-        });
-    };
-
-    onSearch = () => {
-        const {availableProducts} = this.state; 
-        availableProducts.status = REQ.PENDING;
-        this.setState({
-            availableProducts
-        });
-        window.fetch(`http://localhost:3030/search/${this.state.searchString}`, {
-            method: 'GET',
-            credentials: 'omit',
-            headers: {
-                'Access-Control-Allow-Origin':'*',
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            availableProducts.products = data.data.Search.filter(movie => "movie" === movie.Type);
-            availableProducts.status = REQ.SUCCESS;
-            this.setState({
-                availableProducts
-            });
-        })
-        .catch(err => {
-            availableProducts.status = REQ.ERROR;
-            console.log(err);
-            this.setState({
-                availableProducts
-            });
-        });
-    };
-
-    handleMovieClick = (movie) => {
-        const currentSelectedMovies = this.state.selectedProducts;
-        if (currentSelectedMovies.indexOf(movie) === -1) {
-            currentSelectedMovies.push(movie);
-            this.setState({
-                selectedProducts: currentSelectedMovies
-            });
-        }
-    };
-
-    handleSummaryMovieClick = (movieInSummary) => {
-        const currentSelectedMovies = this.state.selectedProducts;
-        const indexOfSelectedMovie = currentSelectedMovies.indexOf(movieInSummary);
-        currentSelectedMovies.splice(indexOfSelectedMovie, 1);
-        this.setState({
-            selectedProducts: currentSelectedMovies
-        });
-    };
-
     render() {
+        console.log(this);
+        const {
+            onSearch, 
+            searchString, 
+            handleSearchInput, 
+            availableProducts, 
+            handleMovieClick, 
+            handleSummaryMovieClick, 
+            selectedProducts
+        } = this.props;
+
         return(
-            <Container onKeyPress={(event) => event.charCode === 13 && this.onSearch()}>
+            <Container onKeyPress={(event) => event.charCode === 13 && onSearch()}>
                 <h1>FILMER</h1>
                 <TitleAndButtonWrapper>
-                    <SearchField type="text" name="movie-search" value={this.state.searchString} onChange={this.handleSearchInput}/>
-                    <SearchButton onClick={this.onSearch}>
+                    <SearchField type="text" name="movie-search" value={searchString} onChange={(event) => handleSearchInput(event)}/>
+                    <SearchButton onClick={onSearch}>
                         Søk etter filmer
                     </SearchButton>
                 </TitleAndButtonWrapper>
                 <MoviesContainer>
                     {
-                        this.state.availableProducts.status === REQ.SUCCESS && 
-                        this.state.availableProducts.products.map(movie => 
-                        <MovieCard key={movie.imdbID} onClick={() => this.handleMovieClick(movie)}>
+                        availableProducts.status === REQ.SUCCESS && 
+                        availableProducts.products.map(movie => 
+                        <MovieCard key={movie.imdbID} onClick={() => handleMovieClick(movie)}>
                             <h2>{movie.Title}</h2>
                             <p>{movie.Year}</p>
                             <MoviePoster url={movie.Poster}/>
@@ -94,13 +41,13 @@ class Products extends React.Component {
                     }
                 </MoviesContainer>
                 <SummaryWrapper>
-                    {this.state.selectedProducts.map(movie => <MovieCardInSummary key={movie.imdbID} onClick={() => this.handleSummaryMovieClick(movie)}>
+                    {selectedProducts.map(movie => <MovieCardInSummary key={movie.imdbID} onClick={() => handleSummaryMovieClick(movie)}>
                         <h3>{movie.Title}</h3>
                         <p>{movie.Year}</p>
                         <MoviePosterInSummary url={movie.Poster}/>
                     </MovieCardInSummary>)}
                 </SummaryWrapper>
-                <OrderButton onClick={() => this.props.onOrderClick(this.state.selectedProducts)}>
+                <OrderButton onClick={() => this.props.history.push("/summary")}>
                     Bestill
                 </OrderButton>
             </Container>

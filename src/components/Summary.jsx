@@ -3,17 +3,23 @@ import styled from 'styled-components';
 
 class Summary extends React.Component {
 
+    componentDidMount() {
+        if (this.props.selectedProducts.length === 0) {
+            this.props.history.push("/");
+        }
+    }
+
     render() {
         return(
             <Container>
                 <h1>Ordreoppsummering</h1>
                 <OrderSummary>
-                    {this.props.movies.map(movie => <OrderSummaryLine key={movie.imdbID}>
+                    {this.props.selectedProducts.map(movie => <OrderSummaryLine key={movie.imdbID}>
                         <Title>{movie.Title}</Title>
                         <Year>{movie.Year}</Year>
                     </OrderSummaryLine>)}
                 </OrderSummary>
-                <BackButton onClick={this.props.onBack}>
+                <BackButton onClick={() => this.props.history.push("/")}>
                     Tilbake
                 </BackButton>
             </Container>
