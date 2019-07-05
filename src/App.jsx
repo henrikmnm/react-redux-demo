@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import {BrowserRouter, Route, Link} from 'react-router-dom';
-import Summary from './components/Summary';
+import Summary from './pages/Summary';
 import {REQ} from './utils/requestStatus';
-import Products from './components/Products';
+import Products from './pages/Products';
 
 class App extends React.Component {
     constructor(props) {
