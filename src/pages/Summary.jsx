@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {connect} from 'react-redux';
 
 class Summary extends React.Component {
 
@@ -14,7 +15,7 @@ class Summary extends React.Component {
             <Container>
                 <h1>Ordreoppsummering</h1>
                 <OrderSummary>
-                    {this.props.selectedProducts.map(movie => <OrderSummaryLine key={movie.imdbID}>
+                    {this.props.selectedProducts.movies.map(movie => <OrderSummaryLine key={movie.imdbID}>
                         <Title>{movie.Title}</Title>
                         <Year>{movie.Year}</Year>
                     </OrderSummaryLine>)}
@@ -27,7 +28,13 @@ class Summary extends React.Component {
     }
 }
 
-export default Summary;
+const mapStateToProps = (state) => {
+    return {
+        selectedProducts: state.selectedMovies
+    }
+}
+
+export default connect(mapStateToProps)(Summary);
 
 const Container = styled.div`
     display: flex;
