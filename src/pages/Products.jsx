@@ -2,38 +2,54 @@ import React from 'react';
 import { REQ } from '../utils/requestStatus';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { fetchMovies, resetSelectedMovies, selectMovie, deselectMovie } from '../store/actions';
 
 class Products extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchString: ""
+        };
+    }
+    
+    handleSearchInput = (event) => {
+        if (event.target.value !== "") {
+            this.setState({
+                searchString: event.target.value
+            });
+        }
+    }
+
     static contextTypes = {
         router: PropTypes.object
     }
 
     render() {
-        console.log(this);
         const {
-            onSearch, 
-            searchString, 
-            handleSearchInput, 
+            fetchMovies, 
             availableProducts, 
-            handleMovieClick, 
-            handleSummaryMovieClick, 
+            selectMovie, 
+            deselectMovie, 
             selectedProducts
         } = this.props;
+        
+        console.log(selectedProducts);
 
         return(
-            <Container onKeyPress={(event) => event.charCode === 13 && onSearch()}>
+            <Container onKeyPress={(event) => event.charCode === 13 && fetchMovies(this.state.searchString)}>
                 <h1>FILMER</h1>
                 <TitleAndButtonWrapper>
-                    <SearchField type="text" name="movie-search" value={searchString} onChange={(event) => handleSearchInput(event)}/>
-                    <SearchButton onClick={onSearch}>
+                    <SearchField type="text" name="movie-search" value={this.state.searchString} onChange={(event) => this.handleSearchInput(event)}/>
+                    <SearchButton onClick={() => fetchMovies(this.state.searchString)}>
                         Søk etter filmer
                     </SearchButton>
                 </TitleAndButtonWrapper>
                 <MoviesContainer>
                     {
                         availableProducts.status === REQ.SUCCESS && 
-                        availableProducts.products.map(movie => 
-                        <MovieCard key={movie.imdbID} onClick={() => handleMovieClick(movie)}>
+                        availableProducts.movies.map(movie => 
+                        <MovieCard key={movie.imdbID} onClick={() => selectMovie(movie)}>
                             <h2>{movie.Title}</h2>
                             <p>{movie.Year}</p>
                             <MoviePoster url={movie.Poster}/>
@@ -41,7 +57,7 @@ class Products extends React.Component {
                     }
                 </MoviesContainer>
                 <SummaryWrapper>
-                    {selectedProducts.map(movie => <MovieCardInSummary key={movie.imdbID} onClick={() => handleSummaryMovieClick(movie)}>
+                    {selectedProducts.movies.map(movie => <MovieCardInSummary key={movie.imdbID} onClick={() => deselectMovie(movie)}>
                         <h3>{movie.Title}</h3>
                         <p>{movie.Year}</p>
                         <MoviePosterInSummary url={movie.Poster}/>
@@ -55,7 +71,23 @@ class Products extends React.Component {
     }
 }
 
-export default Products;
+const mapStateToProps = (state) => {
+    return {
+        availableProducts: state.availableMovies,
+        selectedProducts: state.selectedMovies
+    };
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        fetchMovies: (searchString) => dispatch(fetchMovies(searchString)),
+        selectMovie: (movie) => dispatch(selectMovie(movie)),
+        deselectMovie: (movie) => dispatch(deselectMovie(movie)),
+        resetSelectedMovies: () => dispatch(resetSelectedMovies())
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products);
 
 const Container = styled.div`
     width: 100%
